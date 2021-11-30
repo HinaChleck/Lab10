@@ -17,14 +17,18 @@ namespace Lab10
         {
             try
             {
-                Console.Write("Введите количество градусов: ");
-                int gradus = Convert.ToInt32(Console.ReadLine());
-                Console.Write("Введите количество минут: ");
-                int min = Convert.ToInt32(Console.ReadLine());
-                Console.Write("Введите количество секунд: ");
-                int sec = Convert.ToInt32(Console.ReadLine());
-                Angle angle = new Angle(gradus, min, sec);
-                Console.Write("Количество радиан = {0}", angle.ToRadians());
+                Angle angle = new Angle();
+                Console.Write("Введите градусы: ");
+                angle.Gradus = Convert.ToInt32(Console.ReadLine());
+                Console.Write("Введите минуты: ");
+                angle.Min = Convert.ToInt32(Console.ReadLine());
+                Console.Write("Введите секунды: ");
+                angle.Sec = Convert.ToInt32(Console.ReadLine());
+                
+                
+                Console.WriteLine("Угол в радианах = {0}", angle.ToRadians());
+                Console.WriteLine("({0} об. {1} радиан)", angle.CountTurns(), angle.ToRadians()-2*Math.PI*angle.CountTurns());
+
             }
             catch (Exception ex)
             { Console.WriteLine("Ошибка: {0}",ex.Message);}  
@@ -36,19 +40,20 @@ namespace Lab10
             int min;
             int sec;
             
-            public int Gradus { get { return gradus; } set { gradus = value; } }
+            public int Gradus { get { return gradus; } set { gradus = value; } }//ввод отрицательных значений градуса угла допускается.
+                                                                                //градусы могут быть более 180 и более 360
 
             public int Min
             {
                 set
                 {
-                    if (value < 60)
+                    if (value >=0 & value < 60)
                     {
                         min = value;
                     }
                     else
                     {
-                        throw new Exception("Некорректный ввод минут: максимальное допустимое значение - 60"); 
+                        throw new Exception("Некорректный ввод минут: допустимый диапазон [0;60)"); 
                     }
                 }
 
@@ -59,20 +64,20 @@ namespace Lab10
             {
                 set
                 {
-                    if (value < 60)
+                    if (value >= 0 & value < 60)
                     {
                         sec = value;
                     }
                     else
                     {
-                        throw new Exception("Некорректный ввод секунд: максимальное допустимое значение - 60");                     
+                        throw new Exception("Некорректный ввод секунд: допустимы диапазон [0;60) ");                     
                     }
                 }
 
                 get { return sec; }
             }
-
-            public Angle(int gradus, int min = 0, int sec = 0)
+            
+            public Angle(int gradus=0, int min = 0, int sec = 0)
             {
                 Gradus = gradus;
                 Min = min;
@@ -83,9 +88,14 @@ namespace Lab10
             public double ToRadians()
             {
                 double radians;
-                double PI = Math.PI;
-                radians = Gradus * PI / 180 + Min * PI / 60 / 180 + Sec * PI / 3600 / 180;
+                radians = Gradus * Math.PI / 180 + Min * Math.PI / 60 / 180 + Sec * Math.PI / 3600 / 180;
                 return radians;
+            }
+            public double CountTurns()//считает целые обороты. Должно быть целым, может быть отрицательныи
+            {
+                int turns = 0;
+                turns = Gradus / 360;
+                return turns;
             }
         }
     }   
